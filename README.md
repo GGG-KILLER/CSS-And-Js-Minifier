@@ -11,7 +11,18 @@ Because I use pre-gzipped files on my web server and since I created this tool t
 Maybe in a future version or if I get too many requests.
 
 # License
-This program is distributed under the MIT License.
+CSS & Js Minifier
+Copyright (C) 2015  GGG KILLER
 
-The tools used to minify the files are not my responsability and are provided by their respective creators.
-This program is given without ANY warranty nor support so please do not contact me asking for support.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
