@@ -53,9 +53,7 @@ namespace CSSAndJsMinifier
                 var responseString = await response.Content.ReadAsStringAsync();
 
                 File.WriteAllText(filename.Replace(".css", ".min.css"), responseString);
-
-                SetStatus("Compressing " + filename.Replace(folder, "").Replace(".css", ".min.css") + " ...", 75);
-                Compress(filename.Replace(".css", ".min.css"));
+                
                 SetStatus("Minifying and compressing of " + filename.Replace(folder, "").Replace(".css", ".min.css") + " done!", 100);
             }
         }
@@ -74,28 +72,8 @@ namespace CSSAndJsMinifier
                 var responseString = await response.Content.ReadAsStringAsync();
 
                 File.WriteAllText(filename.Replace(".js", ".min.js"), responseString);
-
-                SetStatus("Compressing " + filename.Replace(folder,"").Replace(".js", ".min.js") + " ...", 75);
-                Compress(filename.Replace(".js", ".min.js"));
+                
                 SetStatus("Minifying and compressing of " + filename.Replace(folder, "").Replace(".js", ".min.js") + " done!", 100);
-            }
-        }
-
-        private void Compress(string filename)
-        {
-            FileInfo fin = new FileInfo(filename);
-            using (FileStream originalFileStream = fin.OpenRead())
-            {
-                if ((File.GetAttributes(fin.FullName) & FileAttributes.Hidden) != FileAttributes.Hidden & fin.Extension != ".gz")
-                {
-                    using (FileStream compressedFileStream = File.Create(fin.FullName + ".gz"))
-                    {
-                        using (GZipStream compressionStream = new GZipStream(compressedFileStream, CompressionLevel.Optimal))
-                        {
-                            originalFileStream.CopyTo(compressionStream);
-                        }
-                    }
-                }
             }
         }
 
@@ -109,8 +87,7 @@ namespace CSSAndJsMinifier
 
                 if (minify)
                 {
-                    SetStatus("Compressing " + Path.GetFileName(file) + " ...", 0);
-                    Compress(file);
+                    SetStatus("Minifying " + Path.GetFileName(file) + " ...", 0);
                     MinifyJS(file);
                 }
                 else
@@ -125,8 +102,7 @@ namespace CSSAndJsMinifier
 
                 if (minify)
                 {
-                    SetStatus("Compressing " + Path.GetFileName(file) + " ...", 0);
-                    Compress(file);
+                    SetStatus("Minifying " + Path.GetFileName(file) + " ...", 0);
                     MinifyCSS(file);
                 }
                 else
