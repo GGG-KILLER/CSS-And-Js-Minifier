@@ -2,7 +2,7 @@
 Simple C# Program that makes use of cssminifier.com and javascript-minifier.com to minify and compress all CSS and Js files on a folder
 
 # What does it do?
-It searches for all the css and js files inside it ignoring the ones with .min.js or .min.css then compresses the original to a .gz file inscase your server has gzip enabled and also minifies the file to filename.min.ext and gzips it too.
+It searches for all the css and js files inside it ignoring the ones with .min.js or .min.css then minifies the file to {filename}.min.{ext}.
 
 # License
 CSS & Js Minifier
