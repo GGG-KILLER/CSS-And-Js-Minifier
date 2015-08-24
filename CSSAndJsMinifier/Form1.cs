@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Net.Http;
-using System.Web;
+using System.Windows.Forms;
 
 namespace CSSAndJsMinifier
 {
     public partial class Form1 : Form
     {
-        string[] js, css;
-        string folder;
+        private string[] js, css;
+        private string folder;
+
         public Form1()
         {
             InitializeComponent();
@@ -29,14 +22,14 @@ namespace CSSAndJsMinifier
             FolderSelectDialog fsd = new FolderSelectDialog();
             fsd.ShowDialog();
             folder = fsd.FileName;
-            if(!Directory.Exists(folder))
+            if (!Directory.Exists(folder))
             {
                 MessageBox.Show("Directory doesn't exists!", "Error!");
                 folder = null;
                 return;
             }
             label2.Text = folder;
-            SearchCSSAndJS(folder,false);
+            SearchCSSAndJS(folder, false);
         }
 
         private async void MinifyCSS(string filename)
@@ -44,7 +37,7 @@ namespace CSSAndJsMinifier
             SetStatus("Minifying " + filename.Replace(folder, "").Replace(".css", ".min.css") + " ...", 50);
             using (var client = new HttpClient())
             {
-                var values = new Dictionary<string, string>{{ "input", File.ReadAllText(filename) }};
+                var values = new Dictionary<string, string> { { "input", File.ReadAllText(filename) } };
 
                 var content = new FormUrlEncodedContent(values);
 
@@ -53,7 +46,7 @@ namespace CSSAndJsMinifier
                 var responseString = await response.Content.ReadAsStringAsync();
 
                 File.WriteAllText(filename.Replace(".css", ".min.css"), responseString);
-                
+
                 SetStatus("Minifying and compressing of " + filename.Replace(folder, "").Replace(".css", ".min.css") + " done!", 100);
             }
         }
@@ -72,7 +65,7 @@ namespace CSSAndJsMinifier
                 var responseString = await response.Content.ReadAsStringAsync();
 
                 File.WriteAllText(filename.Replace(".js", ".min.js"), responseString);
-                
+
                 SetStatus("Minifying and compressing of " + filename.Replace(folder, "").Replace(".js", ".min.js") + " done!", 100);
             }
         }
@@ -107,14 +100,14 @@ namespace CSSAndJsMinifier
                 }
                 else
                 {
-                    listBox1.Items.Add(file.Replace(folder,""));;
+                    listBox1.Items.Add(file.Replace(folder, ""));
                 }
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if(!(folder is string))
+            if (!(folder is string))
             {
                 MessageBox.Show("No folder selected or unexisting folder selected!");
                 return;
