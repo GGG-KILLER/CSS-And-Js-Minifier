@@ -1,10 +1,18 @@
 # CSS-And-Js-Minifier
-Simple C# Program that makes use of cssminifier.com and javascript-minifier.com to minify and compress all CSS and Js files on a folder
+C# Program to minify all JavaScript and CSS files inside a folder.
 
-Current version: 1.1
+**It doesn't uses makes use of cssminifier.com and javascript-minifier.com anymore.**
+
+Without the dependency of online services, it can be used offline and it also is much more faster than the previous versions.
+
+Current version: 2.0.0
 
 # What does it do?
 It searches for all the css and js files inside it ignoring the ones with .min.js or .min.css then minifies the file to {filename}.min.{ext}.
+
+# Used libraries:
+- [YUI Compressor.NET](https://github.com/PureKrome/YUICompressor.NET) (provides the minification methods)
+- [Costura.Fody](https://github.com/Fody/Costura) (embbeds all DLLs inside the main exe)
 
 # License
 CSS & Js Minifier
