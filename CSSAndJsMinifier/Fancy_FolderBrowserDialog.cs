@@ -14,9 +14,9 @@ public class FolderSelectDialog
     /// <summary>
     /// Default constructor
     /// </summary>
-    public FolderSelectDialog()
+    public FolderSelectDialog ( )
     {
-        ofd = new System.Windows.Forms.OpenFileDialog();
+        ofd = new System.Windows.Forms.OpenFileDialog ( );
 
         ofd.Filter = "Folders|\n";
         ofd.AddExtension = false;
@@ -61,9 +61,9 @@ public class FolderSelectDialog
     /// Shows the dialog
     /// </summary>
     /// <returns>True if the user presses OK else false</returns>
-    public bool ShowDialog()
+    public bool ShowDialog ( )
     {
-        return ShowDialog(IntPtr.Zero);
+        return ShowDialog ( IntPtr.Zero );
     }
 
     /// <summary>
@@ -71,45 +71,46 @@ public class FolderSelectDialog
     /// </summary>
     /// <param name="hWndOwner">Handle of the control to be parent</param>
     /// <returns>True if the user presses OK else false</returns>
-    public bool ShowDialog(IntPtr hWndOwner)
+    public bool ShowDialog ( IntPtr hWndOwner )
     {
         bool flag = false;
 
-        if (Environment.OSVersion.Version.Major >= 6)
+        if ( Environment.OSVersion.Version.Major >= 6 )
         {
-            var r = new Reflector("System.Windows.Forms");
+            var r = new Reflector ( "System.Windows.Forms" );
 
             uint num = 0;
-            Type typeIFileDialog = r.GetType("FileDialogNative.IFileDialog");
-            object dialog = r.Call(ofd, "CreateVistaDialog");
-            r.Call(ofd, "OnBeforeVistaDialog", dialog);
+            Type typeIFileDialog = r.GetType ( "FileDialogNative.IFileDialog" );
+            object dialog = r.Call ( ofd, "CreateVistaDialog" );
+            r.Call ( ofd, "OnBeforeVistaDialog", dialog );
 
-            uint options = (uint)r.CallAs(typeof(System.Windows.Forms.FileDialog), ofd, "GetOptions");
-            options |= (uint)r.GetEnum("FileDialogNative.FOS", "FOS_PICKFOLDERS");
-            r.CallAs(typeIFileDialog, dialog, "SetOptions", options);
+            uint options = (uint) r.CallAs ( typeof ( System.Windows.Forms.FileDialog ), ofd, "GetOptions" );
+            options |= (uint) r.GetEnum ( "FileDialogNative.FOS", "FOS_PICKFOLDERS" );
+            r.CallAs ( typeIFileDialog, dialog, "SetOptions", options );
 
-            object pfde = r.New("FileDialog.VistaDialogEvents", ofd);
+            object pfde = r.New ( "FileDialog.VistaDialogEvents", ofd );
             object[] parameters = new object[] { pfde, num };
-            r.CallAs2(typeIFileDialog, dialog, "Advise", parameters);
-            num = (uint)parameters[1];
+            r.CallAs2 ( typeIFileDialog, dialog, "Advise", parameters );
+            num = (uint) parameters[1];
             try
             {
-                int num2 = (int)r.CallAs(typeIFileDialog, dialog, "Show", hWndOwner);
+                int num2 = (int) r.CallAs ( typeIFileDialog, dialog, "Show", hWndOwner );
                 flag = 0 == num2;
             }
             finally
             {
-                r.CallAs(typeIFileDialog, dialog, "Unadvise", num);
-                GC.KeepAlive(pfde);
+                r.CallAs ( typeIFileDialog, dialog, "Unadvise", num );
+                GC.KeepAlive ( pfde );
             }
         }
         else
         {
-            var fbd = new FolderBrowserDialog();
+            var fbd = new FolderBrowserDialog ( );
             fbd.Description = this.Title;
             fbd.SelectedPath = this.InitialDirectory;
             fbd.ShowNewFolderButton = false;
-            if (fbd.ShowDialog(new WindowWrapper(hWndOwner)) != DialogResult.OK) return false;
+            if ( fbd.ShowDialog ( new WindowWrapper ( hWndOwner ) ) != DialogResult.OK )
+                return false;
             ofd.FileName = fbd.SelectedPath;
             flag = true;
         }
@@ -129,7 +130,7 @@ public class WindowWrapper : System.Windows.Forms.IWin32Window
     /// Constructor
     /// </summary>
     /// <param name="handle">Handle to wrap</param>
-    public WindowWrapper(IntPtr handle)
+    public WindowWrapper ( IntPtr handle )
     {
         _hwnd = handle;
     }
@@ -168,8 +169,8 @@ public class Reflector
     /// Constructor
     /// </summary>
     /// <param name="ns">The namespace containing types to be used</param>
-    public Reflector(string ns)
-        : this(ns, ns)
+    public Reflector ( string ns )
+        : this ( ns, ns )
     { }
 
     /// <summary>
@@ -177,15 +178,15 @@ public class Reflector
     /// </summary>
     /// <param name="an">A specific assembly name (used if the assembly name does not tie exactly with the namespace)</param>
     /// <param name="ns">The namespace containing types to be used</param>
-    public Reflector(string an, string ns)
+    public Reflector ( string an, string ns )
     {
         m_ns = ns;
         m_asmb = null;
-        foreach (AssemblyName aN in Assembly.GetExecutingAssembly().GetReferencedAssemblies())
+        foreach ( AssemblyName aN in Assembly.GetExecutingAssembly ( ).GetReferencedAssemblies ( ) )
         {
-            if (aN.FullName.StartsWith(an))
+            if ( aN.FullName.StartsWith ( an ) )
             {
-                m_asmb = Assembly.Load(aN);
+                m_asmb = Assembly.Load ( aN );
                 break;
             }
         }
@@ -200,17 +201,17 @@ public class Reflector
     /// </summary>
     /// <param name="typeName">The name of the type</param>
     /// <returns>A type instance</returns>
-    public Type GetType(string typeName)
+    public Type GetType ( string typeName )
     {
         Type type = null;
-        string[] names = typeName.Split('.');
+        string[] names = typeName.Split ( '.' );
 
-        if (names.Length > 0)
-            type = m_asmb.GetType(m_ns + "." + names[0]);
+        if ( names.Length > 0 )
+            type = m_asmb.GetType ( m_ns + "." + names[0] );
 
-        for (int i = 1; i < names.Length; ++i)
+        for ( int i = 1 ; i < names.Length ; ++i )
         {
-            type = type.GetNestedType(names[i], BindingFlags.NonPublic);
+            type = type.GetNestedType ( names[i], BindingFlags.NonPublic );
         }
         return type;
     }
@@ -221,16 +222,16 @@ public class Reflector
     /// <param name="name">The name of the type to create</param>
     /// <param name="parameters"></param>
     /// <returns>An instantiated type</returns>
-    public object New(string name, params object[] parameters)
+    public object New ( string name, params object[] parameters )
     {
-        Type type = GetType(name);
+        Type type = GetType ( name );
 
-        ConstructorInfo[] ctorInfos = type.GetConstructors();
-        foreach (ConstructorInfo ci in ctorInfos)
+        ConstructorInfo[] ctorInfos = type.GetConstructors ( );
+        foreach ( ConstructorInfo ci in ctorInfos )
         {
             try
             {
-                return ci.Invoke(parameters);
+                return ci.Invoke ( parameters );
             }
             catch { }
         }
@@ -245,9 +246,9 @@ public class Reflector
     /// <param name="func">The function to execute</param>
     /// <param name="parameters">The parameters to pass to function 'func'</param>
     /// <returns>The result of the function invocation</returns>
-    public object Call(object obj, string func, params object[] parameters)
+    public object Call ( object obj, string func, params object[] parameters )
     {
-        return Call2(obj, func, parameters);
+        return Call2 ( obj, func, parameters );
     }
 
     /// <summary>
@@ -257,9 +258,9 @@ public class Reflector
     /// <param name="func">The function to execute</param>
     /// <param name="parameters">The parameters to pass to function 'func'</param>
     /// <returns>The result of the function invocation</returns>
-    public object Call2(object obj, string func, object[] parameters)
+    public object Call2 ( object obj, string func, object[] parameters )
     {
-        return CallAs2(obj.GetType(), obj, func, parameters);
+        return CallAs2 ( obj.GetType ( ), obj, func, parameters );
     }
 
     /// <summary>
@@ -270,9 +271,9 @@ public class Reflector
     /// <param name="func">The function to execute</param>
     /// <param name="parameters">The parameters to pass to function 'func'</param>
     /// <returns>The result of the function invocation</returns>
-    public object CallAs(Type type, object obj, string func, params object[] parameters)
+    public object CallAs ( Type type, object obj, string func, params object[] parameters )
     {
-        return CallAs2(type, obj, func, parameters);
+        return CallAs2 ( type, obj, func, parameters );
     }
 
     /// <summary>
@@ -283,10 +284,10 @@ public class Reflector
     /// <param name="func">The function to execute</param>
     /// <param name="parameters">The parameters to pass to function 'func'</param>
     /// <returns>The result of the function invocation</returns>
-    public object CallAs2(Type type, object obj, string func, object[] parameters)
+    public object CallAs2 ( Type type, object obj, string func, object[] parameters )
     {
-        MethodInfo methInfo = type.GetMethod(func, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        return methInfo.Invoke(obj, parameters);
+        MethodInfo methInfo = type.GetMethod ( func, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic );
+        return methInfo.Invoke ( obj, parameters );
     }
 
     /// <summary>
@@ -295,9 +296,9 @@ public class Reflector
     /// <param name="obj">The object containing 'prop'</param>
     /// <param name="prop">The property name</param>
     /// <returns>The property value</returns>
-    public object Get(object obj, string prop)
+    public object Get ( object obj, string prop )
     {
-        return GetAs(obj.GetType(), obj, prop);
+        return GetAs ( obj.GetType ( ), obj, prop );
     }
 
     /// <summary>
@@ -307,10 +308,10 @@ public class Reflector
     /// <param name="obj">The object containing 'prop'</param>
     /// <param name="prop">The property name</param>
     /// <returns>The property value</returns>
-    public object GetAs(Type type, object obj, string prop)
+    public object GetAs ( Type type, object obj, string prop )
     {
-        PropertyInfo propInfo = type.GetProperty(prop, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        return propInfo.GetValue(obj, null);
+        PropertyInfo propInfo = type.GetProperty ( prop, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic );
+        return propInfo.GetValue ( obj, null );
     }
 
     /// <summary>
@@ -319,11 +320,11 @@ public class Reflector
     /// <param name="typeName">The name of enum type</param>
     /// <param name="name">The name of the value</param>
     /// <returns>The enum value</returns>
-    public object GetEnum(string typeName, string name)
+    public object GetEnum ( string typeName, string name )
     {
-        Type type = GetType(typeName);
-        FieldInfo fieldInfo = type.GetField(name);
-        return fieldInfo.GetValue(null);
+        Type type = GetType ( typeName );
+        FieldInfo fieldInfo = type.GetField ( name );
+        return fieldInfo.GetValue ( null );
     }
 
     #endregion Methods
