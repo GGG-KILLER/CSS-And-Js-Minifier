@@ -3,6 +3,8 @@ C# Program to minify all JavaScript and CSS files inside a folder.
 
 **It doesn't uses makes use of cssminifier.com and javascript-minifier.com anymore.**
 
+If you really want it to use it, you can use [v1.1](https://github.com/GGG-KILLER/CSS-And-Js-Minifier/releases/tag/v1.1)
+
 Without the dependency of online services, it can be used offline and it also is much more faster than the previous versions.
 
 Current version: 2.0.0
